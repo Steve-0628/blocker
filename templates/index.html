@@ -1,0 +1,149 @@
+<script>
+    function post(url) {
+        const resp = fetch(
+            url,
+            {
+                method: "POST",
+            },
+            {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            }
+        );
+        return resp;
+    }
+    function get(url) {
+        const resp = fetch(
+            url,
+            {
+                method: "GET",
+            },
+            {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            }
+        );
+        return resp;
+    }
+    function cookie_obj(str) {
+        str = str.split("; ");
+        var result = {};
+        for (var i = 0; i < str.length; i++) {
+            var cur = str[i].split("=");
+            result[cur[0]] = cur[1];
+        }
+        return result;
+    }
+    function logout() {
+        document.cookie = "access_token=;max-age=-123456;";
+        document.cookie = "access_token_secret=;max-age=-123456;";
+        location.reload();
+    }
+    function search() {
+        const s = document.querySelector(".search");
+        while (s.lastElementChild) {
+            s.removeChild(s.lastElementChild);
+        }
+        const sval = document.querySelector(".searchtxt").value;
+        const g = get("/search?q=" + sval);
+        g.then(function (response) {
+            return response.json();
+        }).then((data) => {
+            // console.log(data)
+            const users = {};
+            data.statuses.forEach((tweet) => {
+                // const us = await getUser(tweet.user.id_str)
+                if (users[tweet.user.id_str] == undefined) {
+                    users[tweet.user.id_str] = tweet.user;
+
+                    users[tweet.user.id_str] = tweet.user;
+                    const ele = document.createElement("div");
+                    const img = document.createElement("img");
+                    img.src = tweet.user.profile_image_url_https;
+                    ele.appendChild(img);
+                    const sn = document.createElement("span");
+                    sn.innerHTML = tweet.user.screen_name;
+                    ele.appendChild(sn);
+                    const id = document.createElement("span");
+                    id.innerHTML = tweet.user.id_str;
+                    ele.appendChild(id);
+                    const input = document.createElement("input");
+                    input.type = "checkbox";
+                    input.value = tweet.user.id_str;
+                    input.checked = true;
+                    input.classList.add("chkbx");
+                    input.id = "i_" + tweet.user.id_str;
+                    ele.appendChild(input);
+                    document.querySelector(".search").appendChild(ele);
+                }
+            });
+        });
+    }
+    function exclude_following() {
+        const g = get("/following");
+        g.then(function (response) {
+            return response.json();
+        }).then((data) => {
+            data.ids.forEach((user) => {
+                if (document.querySelector("#i_" + user) != null) {
+                    console.log("Hellllooooo")
+                    document.querySelector("#i_" + user).checked = false;
+                }
+            });
+        });
+    }
+    function block(){
+        const users = []
+        document.querySelectorAll(".chkbx").forEach((chkbx) => {
+            if (chkbx.checked) {
+                users.push(chkbx.value);
+            }
+        });
+        users.forEach((user) => {
+            post("/block?id=" + user).then(function (response) {
+                return response.json();
+            }).then((data) => {
+                console.log(data);
+            });
+        });
+        // console.log(users)
+    }
+    async function getUser(id) {
+        await fetch("/user?id=" + id)
+            .then((response) => response.json())
+            .then((responseJson) => {
+                return responseJson;
+            });
+    }
+
+    const ck = cookie_obj(document.cookie);
+
+    window.addEventListener("load", () => {
+        if ("access_token" in ck && "access_token_secret" in ck) {
+            // alert("Logged in");
+            // render logged-in stuff somehow
+            document.querySelector(".guest").classList.add("hidden");
+
+            document.querySelector(".loggedin").classList.remove("hidden");
+        } else {
+            // alert("Not logged in");
+        }
+    });
+</script>
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
+<div class="main">
+    <div class="guest">
+        <a href="/login">ログイン </a>
+    </div>
+    <div class="loggedin hidden">
+        <button onclick="logout()">ログアウト</button><br />
+        <input type="text" class="searchtxt" placeholder="lang:ja url:amazon.co.jp url:22 url:tag source:twittbot.net" /><button onclick="search()">検索する</button><br />
+        <button onclick="exclude_following()">フォロー中を除外する</button><br />
+        <button onclick="block()">ブロックする</button><br />
+        <div class="search"></div>
+    </div>
+</div>
