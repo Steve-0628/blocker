@@ -58,7 +58,7 @@ def hisubway():
     t = twitter.post("https://api.twitter.com/oauth/access_token",
                      params={'oauth_verifier': oauthverifier,  "oauth_token": oauthtoken})
     access_token = dict(parse_qsl(t.content.decode("utf-8")))
-    res = flask.redirect("https://hisubway.online/blocker")
+    res = flask.redirect("/redir/")
     max_age = 60 * 60 * 24 * 120  # 120 days
     expires = int(datetime.now().timestamp()) + max_age
     res.set_cookie(
@@ -66,6 +66,10 @@ def hisubway():
     res.set_cookie('access_token_secret',
                    access_token["oauth_token_secret"], max_age=max_age, expires=expires)
     return res
+
+@app.route("/redir/")
+def redir():
+    return flask.redirect("https://hisubway.online/bulkblock")
 
 
 @app.route("/search", methods=["GET"])
