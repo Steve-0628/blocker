@@ -62,9 +62,9 @@ def hisubway():
     max_age = 60 * 60 * 24 * 120  # 120 days
     expires = int(datetime.now().timestamp()) + max_age
     res.set_cookie(
-        'access_token', access_token["oauth_token"], max_age=max_age, expires=expires)
+        'access_token', access_token["oauth_token"], max_age=max_age, expires=expires, domain=".hisubway.online")
     res.set_cookie('access_token_secret',
-                   access_token["oauth_token_secret"], max_age=max_age, expires=expires)
+                   access_token["oauth_token_secret"], max_age=max_age, expires=expires, domain=".hisubway.online")
     return res
 
 @app.route("/redir/")
