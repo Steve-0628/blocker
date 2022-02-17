@@ -1,168 +1,32 @@
-<script>
-    function post(url) {
-        const u = new URL(location.origin + url);
-        u.searchParams.set("access_token", cookie_obj(document.cookie)["access_token"])
-        u.searchParams.set("access_token_secret", cookie_obj(document.cookie)["access_token_secret"])
-        url = u.toString()
-        console.log(url)
-        const resp = fetch(
-            url,
-            {
-                method: "POST",
-            },
-            {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            }
-        );
-        return resp;
-    }
-    function get(url) {
-        const u = new URL(location.origin + url);
-        u.searchParams.set("access_token", cookie_obj(document.cookie)["access_token"])
-        u.searchParams.set("access_token_secret", cookie_obj(document.cookie)["access_token_secret"])
-        url = u.toString()
-        const resp = fetch(
-            url,
-            {
-                method: "GET",
-            },
-            {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            }
-        );
-        return resp;
-    }
-    function cookie_obj(str) {
-        str = str.split("; ");
-        var result = {};
-        for (var i = 0; i < str.length; i++) {
-            var cur = str[i].split("=");
-            result[cur[0]] = cur[1];
-        }
-        return result;
-    }
-    function logout() {
-        document.cookie = "access_token=;max-age=-123456;";
-        document.cookie = "access_token_secret=;max-age=-123456;";
-        location.reload();
-    }
-    function search() {
-        const s = document.querySelector(".search");
-        while (s.lastElementChild) {
-            s.removeChild(s.lastElementChild);
-        }
-        const sval = document.querySelector(".searchtxt").value;
-        const g = get("/search?q=" + sval);
-        g.then(function (response) {
-            return response.json();
-        }).then((data) => {
-            // console.log(data)
-            const users = {};
-            data.statuses.forEach((tweet) => {
-                // TEMPORARY DISABLED DUE TO A BUG
-                // let old = undefined
-                // if (tweet["retweeted_status"] != undefined) {
-                //     old = tweet
-                //     tweet = tweet["retweeted_status"]
-                // }
-                // const us = await getUser(tweet.user.id_str)
-                if (users[tweet.user.id_str] == undefined) {
+<!DOCTYPE html>
+<html lang="ja">
 
-                    if(old != undefined){
-                        console.log(old, tweet)
-                    }
-                    users[tweet.user.id_str] = tweet.user;
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
 
-                    users[tweet.user.id_str] = tweet.user;
-                    const ele = document.createElement("div");
-                    const img = document.createElement("img");
-                    img.src = tweet.user.profile_image_url_https;
-                    ele.appendChild(img);
-                    const sn = document.createElement("span");
-                    sn.innerHTML = tweet.user.screen_name;
-                    ele.appendChild(sn);
-                    const id = document.createElement("span");
-                    id.innerHTML = tweet.user.id_str;
-                    ele.appendChild(id);
-                    const input = document.createElement("input");
-                    input.type = "checkbox";
-                    input.value = tweet.user.id_str;
-                    input.checked = true;
-                    input.classList.add("chkbx");
-                    input.id = "i_" + tweet.user.id_str;
-                    ele.appendChild(input);
-                    document.querySelector(".search").appendChild(ele);
-                }
-            });
-        });
-    }
-    function exclude_following() {
-        const g = get("/following");
-        g.then(function (response) {
-            return response.json();
-        }).then((data) => {
-            data.ids.forEach((user) => {
-                if (document.querySelector("#i_" + user) != null) {
-                    console.log("Hellllooooo")
-                    document.querySelector("#i_" + user).checked = false;
-                }
-            });
-        });
-    }
-    function block(){
-        const users = []
-        document.querySelectorAll(".chkbx").forEach((chkbx) => {
-            if (chkbx.checked) {
-                users.push(chkbx.value);
-            }
-        });
-        users.forEach((user) => {
-            post("/block?id=" + user).then(function (response) {
-                return response.json();
-            }).then((data) => {
-                console.log(data);
-            });
-        });
-        // console.log(users)
-    }
-    async function getUser(id) {
-        await fetch("/user?id=" + id)
-            .then((response) => response.json())
-            .then((responseJson) => {
-                return responseJson;
-            });
-    }
+  <title>Bulk Block</title>
+  <!-- <meta property="og:title" content="">
+  <meta name="description" content="">
+  <meta property="og:description" content="">
+  <meta property="og:image" content="./">
+  <meta property="og:locale" content="ja_JP">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://">
+  <link rel="canonical" href="https://">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="./favicon.ico">
+  <meta name="theme-color" content="#ffffff"> -->
 
-    const ck = cookie_obj(document.cookie);
+  
+  <script type="module" crossorigin src="/assets/index.021934d1.js"></script>
+  <link rel="modulepreload" href="/assets/vendor.22bd04f5.js">
+  <link rel="stylesheet" href="/assets/index.aea3f751.css">
+</head>
 
-    window.addEventListener("load", () => {
-        if ("access_token" in ck && "access_token_secret" in ck) {
-            // alert("Logged in");
-            // render logged-in stuff somehow
-            document.querySelector(".guest").classList.add("hidden");
+<body>
+  <div id="app"></div>
+</body>
 
-            document.querySelector(".loggedin").classList.remove("hidden");
-        } else {
-            // alert("Not logged in");
-        }
-    });
-</script>
-<style>
-    .hidden {
-        display: none;
-    }
-</style>
-<div class="main">
-    <div class="guest">
-        <a href="/login">ログイン </a>
-    </div>
-    <div class="loggedin hidden">
-        <button onclick="logout()">ログアウト</button><br />
-        <input type="text" class="searchtxt" placeholder="lang:ja url:amazon.co.jp url:22 url:tag source:twittbot.net" /><button onclick="search()">検索する</button><br />
-        <button onclick="exclude_following()">フォロー中を除外する</button><br />
-        <button onclick="block()">ブロックする</button><br />
-        <div class="search"></div>
-    </div>
-</div>
+</html>

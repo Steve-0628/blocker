@@ -16,6 +16,9 @@ CS = os.environ.get("CS")
 def index():
     return flask.render_template('index.html')
 
+@app.route("/assets/<path:path>")
+def send_assets(path):
+    return flask.send_from_directory("assets", path)
 
 @app.route('/login')
 def login():
@@ -31,7 +34,6 @@ def login():
     url = "https://api.twitter.com/oauth/authorize?oauth_token=" + \
         req.get('oauth_token')
     return flask.redirect(url)
-
 
 @app.route("/oauth/")
 def oauth():
@@ -71,7 +73,6 @@ def hisubway():
 def redir():
     return flask.redirect("https://hisubway.online/bulkblock")
 
-
 @app.route("/search", methods=["GET"])
 def search():
     oauth = OAuth1Session(
@@ -86,7 +87,6 @@ def search():
     req = oauth.get(url, params=params)
     return req.json()
 
-
 @app.route("/following", methods=["GET"])
 def following():
     oauth = OAuth1Session(
@@ -98,7 +98,6 @@ def following():
     }
     req = oauth.get(url, params=params)
     return req.json()
-
 
 @app.route("/block", methods=["POST"])
 def block():
@@ -118,7 +117,6 @@ def block():
         return {}
     req = oauth.post(url, params=params)
     return req.json()
-
 
 @app.route("/user", methods=["GET"])
 def user():
