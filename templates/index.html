@@ -52,8 +52,17 @@
             // console.log(data)
             const users = {};
             data.statuses.forEach((tweet) => {
+                let old = undefined
+                if (tweet["retweeted_status"] != undefined) {
+                    old = tweet
+                    tweet = tweet["retweeted_status"]
+                }
                 // const us = await getUser(tweet.user.id_str)
                 if (users[tweet.user.id_str] == undefined) {
+
+                    if(old != undefined){
+                        console.log(old, tweet)
+                    }
                     users[tweet.user.id_str] = tweet.user;
 
                     users[tweet.user.id_str] = tweet.user;

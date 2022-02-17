@@ -141,4 +141,4 @@ def user():
     return req.json()
 
 
-app.run(debug=False, host="0.0.0.0", port=os.environ.get("PORT", 5000))
+app.run(debug=bool(os.environ.get("PORT", True)), host="0.0.0.0", port=os.environ.get("PORT", 5000))
