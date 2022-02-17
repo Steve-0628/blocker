@@ -1,5 +1,10 @@
 <script>
     function post(url) {
+        const u = new URL(location.origin + url);
+        u.searchParams.set("access_token", cookie_obj(document.cookie)["access_token"])
+        u.searchParams.set("access_token_secret", cookie_obj(document.cookie)["access_token_secret"])
+        url = u.toString()
+        console.log(url)
         const resp = fetch(
             url,
             {
@@ -13,6 +18,10 @@
         return resp;
     }
     function get(url) {
+        const u = new URL(location.origin + url);
+        u.searchParams.set("access_token", cookie_obj(document.cookie)["access_token"])
+        u.searchParams.set("access_token_secret", cookie_obj(document.cookie)["access_token_secret"])
+        url = u.toString()
         const resp = fetch(
             url,
             {
@@ -52,11 +61,12 @@
             // console.log(data)
             const users = {};
             data.statuses.forEach((tweet) => {
-                let old = undefined
-                if (tweet["retweeted_status"] != undefined) {
-                    old = tweet
-                    tweet = tweet["retweeted_status"]
-                }
+                // TEMPORARY DISABLED DUE TO A BUG
+                // let old = undefined
+                // if (tweet["retweeted_status"] != undefined) {
+                //     old = tweet
+                //     tweet = tweet["retweeted_status"]
+                // }
                 // const us = await getUser(tweet.user.id_str)
                 if (users[tweet.user.id_str] == undefined) {
 

@@ -75,7 +75,7 @@ def redir():
 @app.route("/search", methods=["GET"])
 def search():
     oauth = OAuth1Session(
-        CK, CS, flask.request.cookies['access_token'], flask.request.cookies['access_token_secret'])
+        CK, CS, flask.request.args['access_token'], flask.request.args['access_token_secret'])
     url = "https://api.twitter.com/1.1/search/tweets.json"
     if "q" not in flask.request.args:
         return {}
@@ -90,7 +90,7 @@ def search():
 @app.route("/following", methods=["GET"])
 def following():
     oauth = OAuth1Session(
-        CK, CS, flask.request.cookies['access_token'], flask.request.cookies['access_token_secret'])
+        CK, CS, flask.request.args['access_token'], flask.request.args['access_token_secret'])
     url = "https://api.twitter.com/1.1/friends/ids.json"
     params = {
         "count": "5000",
@@ -103,7 +103,7 @@ def following():
 @app.route("/block", methods=["POST"])
 def block():
     oauth = OAuth1Session(
-        CK, CS, flask.request.cookies['access_token'], flask.request.cookies['access_token_secret'])
+        CK, CS, flask.request.args['access_token'], flask.request.args['access_token_secret'])
     url = "https://api.twitter.com/1.1/blocks/create.json"
     params = {}
     if "screen_name" in flask.request.args:
@@ -123,7 +123,7 @@ def block():
 @app.route("/user", methods=["GET"])
 def user():
     oauth = OAuth1Session(
-        CK, CS, flask.request.cookies['access_token'], flask.request.cookies['access_token_secret'])
+        CK, CS, flask.request.args['access_token'], flask.request.args['access_token_secret'])
     url = "https://api.twitter.com/1.1/users/show.json"
     params = {}
     if "screen_name" in flask.request.args:
