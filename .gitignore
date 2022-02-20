@@ -1,3 +1,5 @@
 __pycache__
 .DS_Store
 testing.py
+dist.zip
+dist*/
