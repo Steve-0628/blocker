@@ -28,6 +28,8 @@ def login():
         callback = "https://blocker.hmpf.club/oauth/"
     if "hisubway" in flask.request.args:
         callback = "http://bulkblock.hisubway.online/oauth/subway/"
+    elif "blocklist" in flask.request.args:
+        callback = "https://blocker.hmpf.club/oauth/blocklist/"
     oauth = OAuth1Session(CK, CS, callback_uri=callback)
     url = "https://api.twitter.com/oauth/request_token"
     req = oauth.fetch_request_token(url)
@@ -68,6 +70,27 @@ def hisubway():
     res.set_cookie('access_token_secret',
                    access_token["oauth_token_secret"], max_age=max_age, expires=expires, domain=".hisubway.online")
     return res
+
+@app.route("/oauth/blocklist/")
+def hisubway():
+    oauthtoken = flask.request.args['oauth_token']
+    oauthverifier = flask.request.args['oauth_verifier']
+    twitter = OAuth1Session(CK, CS, oauthtoken, oauthverifier)
+    t = twitter.post("https://api.twitter.com/oauth/access_token",
+                     params={'oauth_verifier': oauthverifier,  "oauth_token": oauthtoken})
+    access_token = dict(parse_qsl(t.content.decode("utf-8")))
+    res = flask.redirect("/blocklist/")
+    max_age = 60 * 60 * 24 * 120  # 120 days
+    expires = int(datetime.now().timestamp()) + max_age
+    res.set_cookie(
+        'access_token', access_token["oauth_token"], max_age=max_age, expires=expires, domain=".hisubway.online")
+    res.set_cookie('access_token_secret',
+                   access_token["oauth_token_secret"], max_age=max_age, expires=expires, domain=".hisubway.online")
+    return res
+
+@app.route("/blocklist/")
+def blocklist():
+    return flask.redirect("http://blocklist.hmpf.club/")
 
 @app.route("/redir/")
 def redir():
