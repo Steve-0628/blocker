@@ -72,7 +72,7 @@ def hisubway():
     return res
 
 @app.route("/oauth/blocklist/")
-def blocklist():
+def oauth_blocklist():
     oauthtoken = flask.request.args['oauth_token']
     oauthverifier = flask.request.args['oauth_verifier']
     twitter = OAuth1Session(CK, CS, oauthtoken, oauthverifier)
