@@ -161,5 +161,5 @@ def user():
     req = oauth.get(url, params=params)
     return req.json()
 
-
-app.run(debug=bool(os.environ.get("PORT", True)), host="0.0.0.0", port=os.environ.get("PORT", 5000))
+if __name__ == '__main__':
+    app.run(debug=bool(os.environ.get("PORT", True)), host="0.0.0.0", port=os.environ.get("PORT", 5000))
