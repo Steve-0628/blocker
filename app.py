@@ -27,9 +27,10 @@ def login():
     if os.environ.get("PORT"):
         callback = "https://blocker.hmpf.club/oauth/"
     if "hisubway" in flask.request.args:
-        callback = "http://bulkblock.hisubway.online/oauth/subway/"
+        callback = "http://bb.hisubway.online/oauth/subway/"
     elif "blocklist" in flask.request.args:
         callback = "https://blocker.hmpf.club/oauth/blocklist/"
+    
     oauth = OAuth1Session(CK, CS, callback_uri=callback)
     url = "https://api.twitter.com/oauth/request_token"
     req = oauth.fetch_request_token(url)
