@@ -29,7 +29,7 @@ def login():
     if "hisubway" in flask.request.args:
         callback = "http://bb.hisubway.online/oauth/subway/"
     elif "blocklist" in flask.request.args:
-        callback = "https://blocker.hmpf.club/oauth/blocklist/"
+        callback = "https://hisubway.hmpf.club/oauth/blocklist/"
     
     oauth = OAuth1Session(CK, CS, callback_uri=callback)
     url = "https://api.twitter.com/oauth/request_token"
